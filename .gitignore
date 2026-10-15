@@ -1,0 +1,20 @@
+# Confidential or restricted patient-level data
+*.csv
+*.dta
+*.xlsx
+*.xls
+*.sav
+
+# Manuscripts, reports, logs, and generated outputs
+*.docx
+*.pdf
+*.pptx
+*.smcl
+*.log
+*.png
+*.gph
+
+# Stata temporary and backup files
+*.tmp
+*.bak
+~*
