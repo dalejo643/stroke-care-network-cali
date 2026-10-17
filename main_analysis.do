@@ -11,8 +11,16 @@ if _rc ssc install brant
 * Dataset
 * Run this script from the repository root.
 import delimited "stroke_analysis_data.csv", clear
-egen comorbidities = rowtotal(heart_failure coronary_disease covid19 diabetes hiv dyslipidaemia hypertension other_risk venous_thromboembolism atrial_fibrillation overweight_obesity chronic_kidney_disease)
+
+* Define obesity as BMI >=30 kg/m^2; non-positive BMI values are invalid.
+gen obesity = .
+replace obesity = 1 if bmi >= 30 & bmi < .
+replace obesity = 0 if bmi > 0 & bmi < 30
+egen comorbidities = rowtotal(heart_failure coronary_disease covid19 diabetes hiv dyslipidaemia hypertension other_risk venous_thromboembolism atrial_fibrillation obesity chronic_kidney_disease)
 egen total_comorb = cut(comorbidities), at(0 1 4 9)
+gen risk_other_total = 0
+replace risk_other_total = 1 if hiv == 1 | venous_thromboembolism == 1 | other_risk == 1
+replace risk_other_total = . if hiv == . & venous_thromboembolism == . & other_risk == .
 *egen nihss_group = cut(nihss), at(0 5 16 21 43)
 
 ***********
@@ -45,7 +53,7 @@ tab recent_smoking intervention, col exact
 tab dyslipidaemia intervention, col exact
 tab chronic_kidney_disease intervention, col exact
 tab covid19 intervention, col exact
-tab other_risk intervention, col exact
+tab risk_other_total intervention, col exact
 tab overweight_obesity intervention, col exact
 tab total_comorb intervention, col exact
 tab antihypertensives intervention, col exact
